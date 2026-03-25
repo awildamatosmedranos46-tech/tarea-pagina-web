@@ -1,0 +1,106 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Garage Rápidos y Furiosos</title>
+
+    <style>
+        body {
+            font-family: Arial;
+            background-color: #f2f2f2;
+            padding: 20px;
+        }
+
+        input {
+            display: block;
+            margin-bottom: 10px;
+            padding: 5px;
+        }
+
+        button {
+            padding: 10px;
+            background-color: black;
+            color: white;
+            border: none;
+        }
+
+        .card {
+            background: white;
+            padding: 10px;
+            margin-top: 10px;
+            border-radius: 10px;
+            width: 200px;
+        }
+
+        .card img {
+            width: 100%;
+        }
+    </style>
+</head>
+
+<body>
+
+    <h1>Garage Rápidos y Furiosos</h1>
+
+    <p>Marca:</p>
+    <input type="text" id="marca">
+
+    <p>Modelo:</p>
+    <input type="text" id="modelo">
+
+    <p>Color:</p>
+    <input type="text" id="color">
+
+    <p>Foto (link):</p>
+    <input type="text" id="foto">
+
+    <p>Precio:</p>
+    <input type="number" id="precio">
+
+    <p>Último chofer:</p>
+    <input type="text" id="chofer">
+
+    <br>
+    <button onclick="agregarVehiculo()">Agregar vehículo</button>
+
+    <hr>
+
+    <div id="listado"></div>
+
+    <script>
+
+    function agregarVehiculo() {
+
+        let marca = document.getElementById("marca").value;
+        let modelo = document.getElementById("modelo").value;
+        let color = document.getElementById("color").value;
+        let foto = document.getElementById("foto").value;
+        let precio = document.getElementById("precio").value;
+        let chofer = document.getElementById("chofer").value;
+
+        let listado = document.getElementById("listado");
+
+        listado.innerHTML += `
+            <div class="card">
+                <img src="${foto}">
+                <p><strong>Marca:</strong> ${marca}</p>
+                <p><strong>Modelo:</strong> ${modelo}</p>
+                <p><strong>Color:</strong> ${color}</p>
+                <p><strong>Precio:</strong> ${precio}</p>
+                <p><strong>Chofer:</strong> ${chofer}</p>
+            </div>
+        `;
+
+        // limpiar
+        document.getElementById("marca").value = "";
+        document.getElementById("modelo").value = "";
+        document.getElementById("color").value = "";
+        document.getElementById("foto").value = "";
+        document.getElementById("precio").value = "";
+        document.getElementById("chofer").value = "";
+    }
+
+    </script>
+
+</body>
+</html>
+    
