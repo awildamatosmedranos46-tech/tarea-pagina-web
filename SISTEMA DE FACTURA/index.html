@@ -1,0 +1,171 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Sistema de Facturación</title>
+
+    <style>
+        body {
+            font-family: Arial;
+            padding: 20px;
+        }
+
+        input {
+            display: block;
+            margin-bottom: 10px;
+            padding: 5px;
+        }
+
+        button {
+            margin: 5px 0;
+            padding: 8px;
+        }
+
+        table {
+            margin-top: 10px;
+            width: 100%;
+        }
+
+        @media print {
+            button {
+                display: none;
+            }
+        }
+    </style>
+</head>
+
+<body>
+
+<h1>Sistema de Facturación</h1>
+
+<h2>Datos del Cliente</h2>
+<input type="text" id="cliente" placeholder="Nombre del cliente">
+<input type="date" id="fecha">
+
+<h2>Artículos</h2>
+<button onclick="agregarArticulo()">Agregar artículo</button>
+
+<table border="1" id="tabla">
+    <tr>
+        <th>Código</th>
+        <th>Nombre</th>
+        <th>Precio</th>
+        <th>Cantidad</th>
+        <th>Subtotal</th>
+        <th>Acción</th>
+    </tr>
+</table>
+
+<h3>Total: <span id="total">0.00</span></h3>
+
+<button onclick="guardarFactura()">Guardar factura</button>
+<button onclick="window.print()">Imprimir</button>
+
+<hr>
+
+<h2>Historial de Facturas</h2>
+<div id="historial"></div>
+
+<script>
+
+let contadorFactura = 1;
+
+function agregarArticulo() {
+    let tabla = document.getElementById("tabla");
+
+    let fila = tabla.insertRow();
+
+    fila.innerHTML = `
+        <td><input type="text"></td>
+        <td><input type="text"></td>
+        <td><input type="number" oninput="calcular(this)"></td>
+        <td><input type="number" oninput="calcular(this)"></td>
+        <td>0.00</td>
+        <td><button onclick="eliminarFila(this)">Eliminar</button></td>
+    `;
+}
+
+function calcular(input) {
+    let fila = input.parentNode.parentNode;
+
+    let precio = fila.cells[2].children[0].value;
+    let cantidad = fila.cells[3].children[0].value;
+
+    let subtotal = precio * cantidad || 0;
+
+    fila.cells[4].innerText = subtotal.toFixed(2);
+
+    calcularTotal();
+}
+
+function calcularTotal() {
+    let tabla = document.getElementById("tabla");
+    let total = 0;
+
+    for (let i = 1; i < tabla.rows.length; i++) {
+        total += parseFloat(tabla.rows[i].cells[4].innerText) || 0;
+    }
+
+    document.getElementById("total").innerText = total.toFixed(2);
+}
+
+function eliminarFila(btn) {
+    let fila = btn.parentNode.parentNode;
+    fila.remove();
+    calcularTotal();
+}
+
+function guardarFactura() {
+
+    let cliente = document.getElementById("cliente").value;
+    let fecha = document.getElementById("fecha").value;
+
+    if (!cliente || !fecha) {
+        alert("Completa cliente y fecha");
+        return;
+    }
+
+    let tabla = document.getElementById("tabla");
+    if (tabla.rows.length <= 1) {
+        alert("Agrega artículos");
+        return;
+    }
+
+    let total = document.getElementById("total").innerText;
+
+    let factura = {
+        numero: "F-000" + contadorFactura,
+        cliente,
+        fecha,
+        total
+    };
+
+    let facturas = JSON.parse(localStorage.getItem("facturas")) || [];
+
+    facturas.push(factura);
+
+    localStorage.setItem("facturas", JSON.stringify(facturas));
+
+    contadorFactura++;
+
+    mostrarHistorial();
+}
+
+function mostrarHistorial() {
+    let historial = document.getElementById("historial");
+    historial.innerHTML = "";
+
+    let facturas = JSON.parse(localStorage.getItem("facturas")) || [];
+
+    facturas.forEach(f => {
+        historial.innerHTML += `
+            <p>${f.numero} - ${f.cliente} - ${f.fecha} - $${f.total}</p>
+        `;
+    });
+}
+
+window.onload = mostrarHistorial;
+
+</script>
+
+</body>
+</html>
